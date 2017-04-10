@@ -1,10 +1,9 @@
-"""
-Routes and views for the flask application.
-"""
-
 from datetime import datetime
 from flask import render_template
-from FlaskWebProject1 import app
+from os import environ
+from flask import Flask
+
+app = Flask(__name__)
 
 @app.route('/')
 @app.route('/home')
@@ -35,3 +34,11 @@ def about():
         year=datetime.now().year,
         message='Your application description page.'
     )
+
+if __name__ == '__main__':
+    HOST = environ.get('SERVER_HOST', 'localhost')
+    try:
+        PORT = int(environ.get('SERVER_PORT', '5555'))
+    except ValueError:
+        PORT = 5555
+    app.run(HOST, PORT)
