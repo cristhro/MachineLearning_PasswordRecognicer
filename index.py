@@ -7,32 +7,32 @@ app = Flask(__name__)
 
 @app.route('/')
 @app.route('/home')
+
 def home():
-    """Renders the home page."""
     return render_template(
         'index.html',
-        title='Home Page',
+        title='Pagina principal',
         year=datetime.now().year,
     )
 
-@app.route('/contact')
-def contact():
-    """Renders the contact page."""
+@app.route('/entrenamiento')
+def entrenamiento():
     return render_template(
-        'contact.html',
-        title='Contact',
+        'entrenamiento.html',
+        title='Entrenamiento',
         year=datetime.now().year,
-        message='Your contact page.'
+        message='Teclea las palabras que te aparezcan',
+        palabras=["ROJO","PERRO","PANTALON","CRISTHIANO RONALDO","MANANA POR LA MANANA", "MINERIA DE DATOS", "ADIOS","GRACIAS"]
     )
 
-@app.route('/about')
-def about():
-    """Renders the about page."""
+@app.route('/autenticacion')
+def autenticacion():
     return render_template(
-        'about.html',
-        title='About',
+        'autenticacion.html',
+        title='Autenticacion',
         year=datetime.now().year,
-        message='Your application description page.'
+        message='Teclea la palabra para autenticarte',
+        palabra='GATITO'
     )
 
 if __name__ == '__main__':
