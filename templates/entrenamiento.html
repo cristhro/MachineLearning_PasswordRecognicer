@@ -51,9 +51,9 @@
 					$.ajax({
 					type: "POST",
 					url: "/getCaracter",
-					data:'keyword='+$(this).val(),
+					data:'caracter='+$(this).val(),
 					success: function(data){
-						console.log("Correcto "+ data)
+						console.log("Correcto "+ data.caracter)
 					}
 					});
 				});

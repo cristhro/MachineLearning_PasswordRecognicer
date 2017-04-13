@@ -49,17 +49,17 @@ def autenticacion():
 
 @app.route('/getCaracter', methods=['POST'])
 def getCaracter():
-    ss = request.form['keyword']
+    ss = request.form['caracter']
     ss += "\n"
     print('hola mundo 2  ')
  
-    collection.insert({'caracter': request.form['keyword'], 'tiempo': str(time())})
-    return jsonify({'caracter': request.form['keyword']})
+    collection.insert({'caracter': request.form['caracter'], 'tiempo': str(time())})
+    return jsonify({'caracter': request.form['caracter']})
 
 if __name__ == '__main__':
-    HOST = environ.get('SERVER_HOST', 'localhost')
+    HOST = environ.get('SERVER_HOST', 'ec2-52-205-165-220.compute-1.amazonaws.com')
     try:
-        PORT = int(environ.get('SERVER_PORT', '5555'))
+        PORT = int(environ.get('SERVER_PORT', '8000'))
     except ValueError:
         PORT = 5555
-    app.run(debug=True)
+    app.run(HOST, PORT)
