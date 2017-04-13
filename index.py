@@ -14,6 +14,7 @@ MONGODB_URI =  "mongodb://admin:admin@ds159050.mlab.com:59050/flaskdb"
 client = MongoClient(MONGODB_URI)
 db = client.get_default_database()
 collection = db.cristhian
+preguntas = db.preguntas
 
 app = Flask(__name__)
 
@@ -29,16 +30,29 @@ def home():
 
 @app.route('/entrenamiento')
 def entrenamiento():
+    ''' 
+    preguntas.insert({'palabra': "ROJO"})
+    preguntas.insert({'palabra': "PANTALON"})
+    preguntas.insert({'palabra': "CRISTHIANO RONALDO"})
+    preguntas.insert({'palabra': "ZANAHORIA"})
+    preguntas.insert({'palabra': "MINERIA DE DATOS"})
+    preguntas.insert({'palabra': "ADIOS"})
+    preguntas.insert({'palabra': "GRACIAS"})
+    '''
     return render_template(
         'entrenamiento.html',
         title='Entrenamiento',
         year=datetime.now().year,
         message='Teclea las palabras que te aparezcan',
-        palabras=["ROJO","PERRO","PANTALON","CRISTHIANO RONALDO","MANANA POR LA MANANA", "MINERIA DE DATOS", "ADIOS","GRACIAS"]
+        palabras= preguntas.find(),
+        timestamp= time(),
+        ellapsed=0
     )
 
 @app.route('/autenticacion')
 def autenticacion():
+    values["timestamp"] = time()
+    values["ellapsed"] = 0
     return render_template(
         'autenticacion.html',
         title='Autenticacion',
@@ -49,17 +63,16 @@ def autenticacion():
 
 @app.route('/getCaracter', methods=['POST'])
 def getCaracter():
-    ss = request.form['caracter']
-    ss += "\n"
-    print('hola mundo 2  ')
- 
-    collection.insert({'caracter': request.form['caracter'], 'tiempo': str(time())})
-    return jsonify({'caracter': request.form['caracter']})
+    collection.insert({'caracter': request.form['caracter'], 'tiempo': str(time() - float(request.form['timestamp']))})
+    return jsonify({'caracter': request.form['caracter'],
+                    'timestamp': time(),
+                     'ellapsed': str(time() - float(request.form['timestamp']))
+                    })
 
 if __name__ == '__main__':
-    HOST = environ.get('SERVER_HOST', 'ec2-52-205-165-220.compute-1.amazonaws.com')
+    HOST = environ.get('SERVER_HOST', 'localhost')
     try:
-        PORT = int(environ.get('SERVER_PORT', '8000'))
+        PORT = int(environ.get('SERVER_PORT', '5000'))
     except ValueError:
         PORT = 5555
     app.run(HOST, PORT)

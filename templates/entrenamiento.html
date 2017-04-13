@@ -6,22 +6,25 @@
 		<section>
 			<form  autocomplete="off">
 				<h3>Con quien desea entrenar</h3>
-				
+				<!-- BEGIN Tiempo  --> 
+				<p><input id="id_timestamp" type = "hidden" name = "timestamp" value = {{timestamp}} /></p>
+					<!-- END Tiempo  --> 
 				<input id="r1" name="r1" type="radio"><label for="r1">Cristhian</label>
 				<input id="r2" name="r1" type="radio"><label for="r2">Jesus</label>
 				
 			</form>
 			<form id="theForm" class="simform" autocomplete="off">
 				<div class="simform-inner">
-					<!-- Preguntas  --> 	
+					<!-- BEGIN Palabras  --> 	
 					<ol class="questions">
-						{% for pregunta in palabras %}
+						{% for p in palabras %}
 							<li>
-								<span><label for="q1">{{pregunta}}</label></span>
+								<span><label for="q1">{{p.palabra}}</label></span>
 								<input id="id_pregunta" name="q1" type="text"/>
 							</li>
 				        {% endfor %}
-					</ol><!-- /questions -->
+					</ol><!-- END Palabras -->
+
 					<button class="submit" type="submit">Enviar</button>
 					<div class="controls">
 						<button class="next"></button>
@@ -51,11 +54,17 @@
 					$.ajax({
 					type: "POST",
 					url: "/getCaracter",
-					data:'caracter='+$(this).val(),
+					data: 'caracter='+$(this).val() + '&timestamp='+$("#id_timestamp").val(),
 					success: function(data){
-						console.log("Correcto "+ data.caracter)
+						console.log("Correcto "+ data.caracter +  " T:" + data.ellapsed)
+						$("#id_timestamp").val(data.timestamp)
 					}
 					});
+				});
+				$( "#id_pregunta" ).click(function() {
+					var seconds = new Date().getTime() / 1000;
+				  	$("#id_timestamp").val(seconds);
+				  	console.log('tiempo reiniciado: ' + seconds)
 				});
 			});
 			var theForm = document.getElementById( 'theForm' );
