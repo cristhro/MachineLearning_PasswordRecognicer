@@ -18,7 +18,7 @@
 						{% for pregunta in palabras %}
 							<li>
 								<span><label for="q1">{{pregunta}}</label></span>
-								<input id="q1" name="q1" type="text"/>
+								<input id="id_pregunta" name="q1" type="text"/>
 							</li>
 				        {% endfor %}
 					</ol><!-- /questions -->
@@ -41,27 +41,42 @@
   	{% block scripts %}
 		<script src="/static/js/classie.js"></script>
 		<script src="/static/js/svgcheckbx.js"></script>
-				<script src="/static/js/stepsForm.js"></script>
-				<script>
-					var theForm = document.getElementById( 'theForm' );
-
-					new stepsForm( theForm, {
-						onSubmit : function( form ) {
-							// hide form
-							classie.addClass( theForm.querySelector( '.simform-inner' ), 'hide' );
-
-							/*
-							form.submit()
-							or
-							AJAX request (maybe show loading indicator while we don't have an answer..)
-							*/
-
-							// let's just simulate something...
-							var messageEl = theForm.querySelector( '.final-message' );
-							messageEl.innerHTML = 'Muchas gracias por realizar el entrenamiento';
-							classie.addClass( messageEl, 'show' );
-						}
-					} );
-		</script>
+		<script src="/static/js/stepsForm.js"></script>
+		<script src="https://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
 	{% endblock %}
+		<script>
+			$(document).ready(function(){
+				
+				$("#id_pregunta").keyup(function(){
+					$.ajax({
+					type: "POST",
+					url: "/getCaracter",
+					data:'keyword='+$(this).val(),
+					success: function(data){
+						console.log("Correcto "+ data)
+					}
+					});
+				});
+			});
+			var theForm = document.getElementById( 'theForm' );
+
+			new stepsForm( theForm, {
+				onSubmit : function( form ) {
+					// hide form
+					classie.addClass( theForm.querySelector( '.simform-inner' ), 'hide' );
+
+					/*
+					form.submit()
+					or
+					AJAX request (maybe show loading indicator while we don't have an answer..)
+					*/
+
+					// let's just simulate something...
+					var messageEl = theForm.querySelector( '.final-message' );
+					messageEl.innerHTML = 'Muchas gracias por realizar el entrenamiento';
+					classie.addClass( messageEl, 'show' );
+				}
+			} );
+		</script>
+
 {% endblock %}
