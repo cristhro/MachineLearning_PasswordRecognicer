@@ -1,42 +1,20 @@
 {% extends "layout.html" %}
 
 {% block content %}
+	<div class="palabras">
+		<form autocomplete="off">
+			<!-- BEGIN Tiempo  --> 
+			<p><input id="id_t0" type = "hidden" name = "t0" value = {{t0}} /></p>
+			<!-- END Tiempo  --> 
+				<span><h1 for="q1">{{palabra}}</h1></span>
+				<input id="id_palabra" name="clave" type="text" placeholder="Introduzca la palabra" />
+				<button type="submit" class="btn btn-2 btn-2b ">Enviar</button>
+		</form><!-- /simform -->			
+	</div>
+  	
 
-<div class="container">
-		<section>
-			<form id="theForm" class="simform" autocomplete="off">
-				<div class="simform-inner">
-					<!-- Preguntas  --> 	
-					<ol class="questions">
-						<li>
-							<span><label for="q1">Introduzca su nombre de  usuario</label></span>
-							<input id="q1" name="usuario" type="text"  />
-						</li>
-						<li>
-							<span><label for="q1">{{palabra}}</label></span>
-							<input id="id_palabra" name="clave" type="text" placeholder="Introduzca la palabra" />
-						</li>
-					</ol><!-- /questions -->
-					<button class="submit" type="submit">Enviar</button>
-					<div class="controls">
-						<button class="next"></button>
-						<div class="progress"></div>
-						<span class="number">
-							<span class="number-current"></span>
-							<span class="number-total"></span>
-						</span>
-						<span class="error-message"></span>
-					</div><!-- / controls -->
-				</div><!-- /simform-inner -->
-				<span class="final-message"></span>
-			</form><!-- /simform -->			
-		</section>
-		
-	</div><!-- /container -->
   	{% block scripts %}
 		<script src="/static/js/classie.js"></script>
-		<script src="/static/js/svgcheckbx.js"></script>
-		<script src="/static/js/stepsForm.js"></script>
 		<script src="https://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
 	{% endblock %}	
 		<script>
@@ -45,33 +23,19 @@
 					$.ajax({
 					type: "POST",
 					url: "/getCaracter",
-					data:'caracter='+$(this).val(),
+					data:'palabraLeida='+$(this).val()+ '&t0='+$("#id_t0").val(),
 					success: function(data){
-						console.log("Correcto " + data.caracter)
+						console.log("Correcto "+ data.palabraLeida +  " T:" + data.tiempo)
+						$("#id_t0").val(data.t0)
 					}
 					});
 				});
+				$( "#id_pregunta" ).click(function() {
+					var seconds = new Date().getTime() / 1000;
+				  	$("#id_t0").val(seconds);
+				  	console.log('tiempo reiniciado: ' + seconds)
+				});
 			});
-		
-			var theForm = document.getElementById( 'theForm' );
-
-			new stepsForm( theForm, {
-				onSubmit : function( form ) {
-					// hide form
-					classie.addClass( theForm.querySelector( '.simform-inner' ), 'hide' );
-
-					/*
-					form.submit()
-					or
-					AJAX request (maybe show loading indicator while we don't have an answer..)
-					*/
-
-					// let's just simulate something...
-					var messageEl = theForm.querySelector( '.final-message' );
-					messageEl.innerHTML = 'Autenticacion realizada con exito';
-					classie.addClass( messageEl, 'show' );
-				}
-			} );
 		</script>
 
 {% endblock %}

@@ -1,10 +1,12 @@
 {% extends "layout.html" %}
 
 {% block content %}
-
-<div class="jumbotron">
-    <h1> Autentication App</h1>
-      <p class="lead"> Este es un sistema de autenticacion sin password, algo increible.</p>
-    <p><a href="https://www.hindawi.com/journals/tswj/2013/408280/" class="btn btn-primary btn-large"> Mas informacion &raquo;</a></p>
-</div>
+	<h1  class="main-title">{{ title }} <span class="thin">{{ message }}</span></h1>
+	<section>
+        <select class="cs-select cs-skin-underline">
+            <option value="" disabled selected> ¿ Cual es tu usuario ? </option>
+            <option value="1">Cristhian </option>
+            <option value="2"> Jesus</option>
+        </select>
+    </section>
 {% endblock %}
