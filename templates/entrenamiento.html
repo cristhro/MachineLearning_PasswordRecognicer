@@ -15,16 +15,21 @@
 					<input id="id_t0_error" type = "hidden" name="t0_error" value = {{t0_error}} />
 					<input id="id_tiempoError" type = "hidden" name="tiempoError" value = {{tiempoError}} />
 					<input id="id_falloPalabra" type = "hidden" name="falloPalabra" value = {{falloPalabra}} />
-					<input  type = "hidden" name="numPalabra" value = {{numPalabra}} />
-					<input  type = "hidden" name="numTotalPalabras" value = {{numTotalPalabras}} />
+					<input id="id_numPalabras" type = "hidden" name="numPalabra" value = {{numPalabra}} />
+					<input id="id_numTotalPalabras" type = "hidden" name="numTotalPalabras" value = {{numTotalPalabras}} />
 					
-					<!-- BEGIN Palabras  --> 	
-					<span><h1 id="id_palabra" for="palabra" >{{palabra}}</h1></span>
-					<input  id="id_palabraLeida" name="palabraLeida" type="text"/>
+					<!-- BEGIN Palabras  --> 
+					<h1>{{ palabra }} <span class="thin"></span></h1>	
+					
+					<span class="input input--minoru">
+						<input class="input__field input__field--yoko" type="text" id="id_palabraLeida"  name="palabraLeida" />
+						<label class="input__label input__label--yoko" for="input-16">
+							<span class="input__label-content input__label-content--yoko">{{numPalabra+1}}/{{numTotalPalabras}}</span>
+						</label>
+					</span>	
+					<button class="btn btn-2 btn-2b " type="submit">Siguiente</button>
 
-					<button  type="submit">Enviar</button>
-							<span id="id_numPalabras"  name = "numPalabra" >{{numPalabra}} /</span>
-							<span id="id_numTotalPalabras" name = "numTotalPalabras">{{numTotalPalabras}}</span>
+
 			</form><!-- /simform -->			
 		</div><!-- /div palabras -->
 	{% endif %}

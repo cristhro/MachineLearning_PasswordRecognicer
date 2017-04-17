@@ -111,7 +111,7 @@ def siguiente_palabra():
 
     objeto = {}
     usuario = 'Jesus'
-    numPalabra = request.form['numPalabra']
+    numPalabra = int(request.form['numPalabra'])
     palabras = doc_palabras.find()
     docPalabra = doc_palabras.find_one({'numPalabra': int(numPalabra)})
     palabra = docPalabra['palabra']
