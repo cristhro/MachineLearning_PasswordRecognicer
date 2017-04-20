@@ -42,29 +42,76 @@ def entrenamiento():
         usuario=usuario,
         palabra=palabra['palabra'],
         t0=time(),
+        t0_palabra=time(),
+        tiempoPalabra=0,
         tiempo=0,
         numPalabra=numPalabra,
         numTotalPalabras=numTotalPalabras,
         fallosCaracter=False,
-        falloPalabra=True,
-        tiempoError=0,
+        hayErrPalabra=False,
+        tiempoErrPalabra=0,
         t0_error=0,
-        fin=fin
+        fin=fin,
+        
     )
 
 
-@app.route('/autenticacion')
+
+@app.route('/autenticacion',methods = ["GET", "POST"])
 def autenticacion():
+
+    palabraLeida = ""
+    palabra = "MESA"
+    usuario = 'Jesus'
+    t0 = time()
+    tiempo = 0
+    t0_error = 0
+    tiempoErrPalabra = 0
+    t0_palabra = time()
+    tiempoPalabra = 0
+    hayErrPalabra = False
+    fin = False
+
+    if request.method == 'POST':
+        usuario = 'Jesus'
+        palabraLeida = request.form['palabraLeida']
+        tiempo = str(time() - float(request.form['t0']))
+        t0_error = float(request.form['t0_error'])
+        t0_palabra = float(request.form['t0_palabra'])
+
+        if (mismaPalabra(palabra, palabraLeida)):
+                fin = True
+                if  (t0_error != 0):
+                    tiempoErrPalabra = str(time() - t0_error)
+                t0_error = 0
+                tiempoPalabra = str(time() - t0_palabra)
+                t0_palabra = time()
+        else:
+            if  (t0_error != 0):
+                tiempoErrPalabra = time() - t0_error
+                tiempoErrPalabra = tiempoErrPalabra + (time() - t0_error)
+
+            t0_error = time()
+            hayErrPalabra = True
+
 
     return render_template(
         'autenticacion.html',
         title='Autenticacion',
         year=datetime.now().year,
         message='Teclea la palabra para autenticarte',
-        palabra='GATITO',
-        t0=time(),
-        tiempo=0
-    )
+        palabra= palabra,
+        usuario=usuario,
+        t0=t0,
+        tiempo=0,
+        fallosCaracter=False,
+        hayErrPalabra=hayErrPalabra,
+        tiempoErrPalabra=tiempoErrPalabra,
+        t0_error=t0_error,
+        t0_palabra=t0_palabra,
+        tiempoPalabra=tiempoPalabra,
+        fin=fin)
+    
 
 
 @app.route('/getCaracter', methods=['POST'])
@@ -73,7 +120,7 @@ def getCaracter():
     palabra = request.form['palabra']
     palabraLeida = request.form['palabraLeida']
     tiempo = str(time() - float(request.form['t0']))
-    ultimoCaracter = palabraLeida[len(palabraLeida) - 1]
+    ultimoCaracter = ""
     fallosCaracter = False
 
     objeto = {
@@ -85,9 +132,12 @@ def getCaracter():
         'fallosCaracter': fallosCaracter,
         't0': time()
     }
+
     if not (isValidoUltimoCaracter(palabra, palabraLeida)):
         fallosCaracter = True
         objeto['fallosCaracter'] = fallosCaracter
+    else:
+        ultimoCaracter = palabraLeida[len(palabraLeida) - 1]
 
     doc_features.insert(objeto)
 
@@ -100,83 +150,90 @@ def getCaracter():
         'fallosCaracter': fallosCaracter,
         't0': time(),
         'tiempo': tiempo,
-        'falloPalabra': False,
-        'tiempoError': 0,
+        'hayErrPalabra': False,
+        'tiempoErrPalabra': 0,
         't0_error': time(),
+
     })
 
 
 @app.route('/siguiente_palabra', methods=['POST'])
 def siguiente_palabra():
-
     objeto = {}
-    usuario = 'Jesus'
     numPalabra = int(request.form['numPalabra'])
+    numTotalPalabras = request.form['numTotalPalabras']
+    usuario = 'Jesus'
     palabras = doc_palabras.find()
     docPalabra = doc_palabras.find_one({'numPalabra': int(numPalabra)})
     palabra = docPalabra['palabra']
-    numTotalPalabras = request.form['numTotalPalabras']
-    nuevaPalabra = doc_palabras.find_one({'numPalabra': int(numPalabra) + 1})
+    nuevaPalabra = ""
     palabraLeida = request.form['palabraLeida']
     tiempo = str(time() - float(request.form['t0']))
-    t0_error = str(time() - float(request.form['t0_error']))
-    tiempoError = str(time() - float(t0_error))
+    t0_error = float(request.form['t0_error'])
+    tiempoErrPalabra = 0
+    t0_palabra = float(request.form['t0_palabra'])
+    tiempoPalabra = 0
+
+    hayErrPalabra = False
     fin = False
 
     if(int(numPalabra) == (int(numTotalPalabras) - 1)):
         fin = True
+    else :    
+        docNuevaPalabra = doc_palabras.find_one({'numPalabra': int(numPalabra) + 1})
+        nuevaPalabra  = docNuevaPalabra["palabra"]
+        if (mismaPalabra(palabra, palabraLeida)):
+            if  (t0_error != 0):
+                tiempoErrPalabra = str(time() - t0_error)
+            t0_error = 0
+            tiempoPalabra = str(time() - t0_palabra)
+            t0_palabra = time()
+            numPalabra = int(numPalabra) + 1
+        else:
+            if  (t0_error != 0):
+                tiempoErrPalabra = time() - t0_error
+                tiempoErrPalabra = tiempoErrPalabra + (time() - t0_error)
 
-    else:
-		if not (mismaPalabra(palabra, palabraLeida)):
-			tiempoError = 0
-			objeto = {
-				'usuario': usuario,
-				'palabra': palabra,
-				'palabraLeida': palabraLeida,
-				'tiempo': tiempo,
-				'falloPalabra': True,
-				'tiempoError': tiempoError,
-				't0_error': t0_error,
-				'numPalabra': numPalabra,
-				'numTotalPalabras': numTotalPalabras
-			}
-		else:
-			palabra = nuevaPalabra['palabra']
-			numPalabra = int(numPalabra) + 1
-			t0_error = 0
+            t0_error = time()
+            hayErrPalabra = True
+            nuevaPalabra = palabra
+    # Guardamos el ojeto en la BD
+    doc_features.insert({
+                'usuario': usuario,
+                'palabra': palabra,
+                'palabraLeida': palabraLeida,
+                'tiempo': tiempo,
+                'hayErrPalabra': hayErrPalabra,
+                'tiempoErrPalabra': tiempoErrPalabra,
+                'numPalabra': numPalabra,
+                'numTotalPalabras': numTotalPalabras,
+                'tiempoPalabra':tiempoPalabra,
+            })
 
-			objeto = {
-			    'usuario': usuario,
-			    'palabra': palabra,
-			    'palabraLeida': palabraLeida,
-			    'tiempo': tiempo,
-			    'falloPalabra': False,
-			    'tiempoError': tiempoError,
-			    't0_error': t0_error,
-			    'numPalabra': numPalabra,
-			    'numTotalPalabras': numTotalPalabras
-			}
-    doc_features.insert(objeto)
+
+
     return render_template(
         'entrenamiento.html',
         title='Entrenamiento',
         year=datetime.now().year,
         message='Teclea las palabras que te aparezcan',
         usuario=usuario,
-        palabra=palabra,
+        palabra=nuevaPalabra,
         t0=time(),
         tiempo=0,
         numPalabra=numPalabra,
         numTotalPalabras=numTotalPalabras,
         fallosCaracter=False,
-        falloPalabra=True,
-        tiempoError=tiempoError,
+        hayErrPalabra=hayErrPalabra,
+        tiempoErrPalabra=tiempoErrPalabra,
         t0_error=t0_error,
+        t0_palabra=t0_palabra,
+        tiempoPalabra=tiempoPalabra,
         fin=fin)
 
 
 def isValidoUltimoCaracter(palabra, palabraLeida):
-    if(len(palabraLeida) <= len(palabra)):
+    if(len(palabraLeida) <= len(palabra) and len(palabraLeida) > 0):
         if(palabra[len(palabraLeida) - 1] == palabraLeida[len(palabraLeida) - 1]):
             return True
         else:

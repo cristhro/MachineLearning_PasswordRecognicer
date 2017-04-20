@@ -9,14 +9,11 @@
 			<form   autocomplete="off" action="/siguiente_palabra" method="POST">
 				
 					
-					<input id="id_usuario" type = "hidden" name = "usuario" value = {{usuario}} />
-					<input id="id_t0" type = "hidden" name = "t0" value = {{t0}} />
-					<input id="id_palabra" type = "hidden" name="palabra" value = {{palabra}} />
-					<input id="id_t0_error" type = "hidden" name="t0_error" value = {{t0_error}} />
-					<input id="id_tiempoError" type = "hidden" name="tiempoError" value = {{tiempoError}} />
-					<input id="id_falloPalabra" type = "hidden" name="falloPalabra" value = {{falloPalabra}} />
-					<input id="id_numPalabras" type = "hidden" name="numPalabra" value = {{numPalabra}} />
-					<input id="id_numTotalPalabras" type = "hidden" name="numTotalPalabras" value = {{numTotalPalabras}} />
+					usuario: <input id="id_usuario" type = "text" name = "usuario" value = {{usuario}} disabled /> <br>
+					tiempo char: <input id="id_tiempo" type = "text" name = "tiempo" value = {{tiempo}}  disabled/><br>
+					hay fallo palabra :<input id="id_hayErrPalabra" type = "text" name="hayErrPalabra" value = {{hayErrPalabra}}  disabled/><br>
+					tiempo en corregir error palabra :<input id="id_tiempoErrPalabra" type = "text" name="tiempoErrPalabra" value = {{tiempoErrPalabra}}  disabled/><br>
+					tiempo  palabra :<input id="id_tiempoPalabra" type = "text" name="tiempoPalabra" value = {{tiempoPalabra}}  disabled/><br>
 					
 					<!-- BEGIN Palabras  --> 
 					<h1>{{ palabra }} <span class="thin"></span></h1>	
@@ -29,6 +26,13 @@
 					</span>	
 					<button class="btn btn-2 btn-2b " type="submit">Siguiente</button>
 
+					<!-- DATOS OCULTOS -->
+					<input id="id_t0_error" type = "hidden" name="t0_error" value = {{t0_error}} /><br>
+					<input id="id_t0" type = "hidden" name = "t0" value = {{t0}} /><br>
+					<input id="id_palabra" type = "hidden" name="palabra" value = {{palabra}} /><br>
+					<input id="id_t0_palabra" type = "hidden" name="t0_palabra" value = {{t0_palabra}} /><br>
+					<input id="id_numPalabras" type = "hidden" name="numPalabra" value = {{numPalabra}} /><br>
+					<input id="id_numTotalPalabras" type = "hidden" name="numTotalPalabras" value ={{numTotalPalabras}} />
 
 			</form><!-- /simform -->			
 		</div><!-- /div palabras -->
@@ -60,6 +64,7 @@
 						console.log(data)
 
 						$("#id_t0").val(data.t0)
+						$("#id_tiempo").val(data.tiempo)
 					}
 					});
 				});

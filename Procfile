@@ -23,3 +23,46 @@ web gunicorn index:app
 
         {% block scripts %}{% endblock %}
     </body>
+
+
+
+
+
+
+
+
+
+
+
+     <script src="/static/js/selectFx.js"></script>
+        <script src="/static/js/classie.js"></script>
+    
+    </head>
+        <body class="color-2">
+        <div class="container fondo">
+            <!-- Top Navigation -->
+            <div id="large-header" class="large-header">
+                    <h1  class="main-title">{{ title }} <span href="{{ url_for('entrenamiento') }}" class="thin">{{ message }}</span></h1>
+                    
+            </div>
+            <div class="content ">
+                
+            <section>
+                <select class="cs-select cs-skin-underline">
+                    <option value="" disabled selected>Choose a Bouquet</option>
+                    <option value="1">Gardenia + Daisies</option>
+                    <option value="2">Roses + Stephanotis</option>
+                    <option value="3">Peony + Gerbera</option>
+                    <option value="4">Orchid + Limonium</option>
+                    <option value="5">Iris + Omithoalum</option>
+                </select>
+            </section>
+        </div><!-- /container -->
+        <script>
+            (function() {
+                [].slice.call( document.querySelectorAll( 'select.cs-select' ) ).forEach( function(el) {    
+                    new SelectFx(el);
+                } );
+            })();
+        </script>
+    </body>

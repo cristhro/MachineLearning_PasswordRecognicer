@@ -130,7 +130,7 @@
 	padding: 0;
 	color: #f9f1e9;
 	text-align: center;
-	top: 50%;
+	top: 20%;
 	left: 30%;
 }
 
@@ -277,4 +277,11 @@
 .input--filled .input__label--yoko::after {
 	-webkit-transform: perspective(1000px) rotate3d(1, 0, 0, -90deg);
 	transform: perspective(1000px) rotate3d(1, 0, 0, -90deg);
+}
+
+button[disabled], html input[disabled] {
+    cursor: default;
+    background: none;
+    color: rgb(47, 255, 1);
+    border: 0px;
 }

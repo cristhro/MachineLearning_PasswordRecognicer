@@ -1,26 +1,37 @@
 {% extends "layout.html" %}
 
 {% block content %}
+	
+	{% if fin %}
+		<h2  class="main-title">{{ usuario }} <span class="thin">, palabra correcta!</span></h2>
+	{% else %}
 	<div class="palabras">
-		<form autocomplete="off">
-			<!-- BEGIN Tiempo  --> 
-			<p><input id="id_t0" type = "hidden" name = "t0" value = {{t0}} /></p>
-			<!-- END Tiempo  --> 
-				<span><h1 for="q1">{{palabra}}</h1></span>
-				
-				<span class="input input--minoru">
-					<input class="input__field input__field--yoko" type="text" id="id_palabraLeida"  name="palabraLeida" />
-					<label class="input__label input__label--yoko" for="input-16">
-						<span class="input__label-content input__label-content--yoko"></span>
-					</label>
-				</span>	
-				
+		<form action="/autenticacion" method="POST">
+			usuario: <input id="id_usuario" type = "text" name = "usuario" value = {{usuario}} disabled /> <br>
+			tiempo char: <input id="id_tiempo" type = "text" name = "tiempo" value = {{tiempo}}  disabled/><br>
+			hay fallo palabra :<input id="id_hayErrPalabra" type = "text" name="hayErrPalabra" value = {{hayErrPalabra}}  disabled/><br>
+			tiempo en corregir error palabra :<input id="id_tiempoErrPalabra" type = "text" name="tiempoErrPalabra" value = {{tiempoErrPalabra}}  disabled/><br>
+			tiempo  palabra :<input id="id_tiempoPalabra" type = "text" name="tiempoPalabra" value = {{tiempoPalabra}}  disabled/><br>
+			
+			<!-- BEGIN Palabras  --> 
+			<h1>{{ palabra }} <span class="thin"></span></h1>	
+			
+			<span class="input input--minoru">
+				<input class="input__field input__field--yoko" type="text" id="id_palabraLeida"  name="palabraLeida" />
+				<label class="input__label input__label--yoko" for="input-16">
+			</span>	
+			<button class="btn btn-2 btn-2b " type="submit">Enviar</button>
 
-				<button type="submit" class="btn btn-2 btn-2b ">Enviar</button>
+			<!-- DATOS OCULTOS -->
+			<input id="id_t0_error" type = "hidden" name="t0_error" value = {{t0_error}} /><br>
+			<input id="id_t0" type = "hidden" name = "t0" value = {{t0}} /><br>
+			<input id="id_palabra" type = "hidden" name="palabra" value = {{palabra}} /><br>
+			<input id="id_t0_palabra" type = "hidden" name="t0_palabra" value = {{t0_palabra}} /><br>
+
 		</form><!-- /simform -->			
 	</div>
   	
-
+	{% endif %}
   	{% block scripts %}
 		<script src="/static/js/classie.js"></script>
 		<script src="https://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
