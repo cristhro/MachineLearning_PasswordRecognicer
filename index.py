@@ -52,7 +52,7 @@ def entrenamiento():
         tiempoErrPalabra=0,
         t0_error=0,
         fin=fin,
-        
+
     )
 
 
@@ -111,7 +111,7 @@ def autenticacion():
         t0_palabra=t0_palabra,
         tiempoPalabra=tiempoPalabra,
         fin=fin)
-    
+
 
 
 @app.route('/getCaracter', methods=['POST'])
@@ -179,7 +179,7 @@ def siguiente_palabra():
 
     if(int(numPalabra) == (int(numTotalPalabras) - 1)):
         fin = True
-    else :    
+    else :
         docNuevaPalabra = doc_palabras.find_one({'numPalabra': int(numPalabra) + 1})
         nuevaPalabra  = docNuevaPalabra["palabra"]
         if (mismaPalabra(palabra, palabraLeida)):
@@ -261,9 +261,9 @@ def insertatPalabras(doc):
 # #################### RUN APP #############################
 
 if __name__ == '__main__':
-    HOST = environ.get('SERVER_HOST', 'localhost')
+    HOST = environ.get('SERVER_HOST', 'ec2-52-205-165-220.compute-1.amazonaws.com')
     try:
-        PORT = int(environ.get('SERVER_PORT', '5000'))
+        PORT = int(environ.get('SERVER_PORT', '8000'))
     except ValueError:
         PORT = 5555
     app.run(HOST, PORT, debug=True)
