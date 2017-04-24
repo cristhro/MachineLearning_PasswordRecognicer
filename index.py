@@ -1,6 +1,6 @@
 from datetime import datetime
 from os import environ
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, make_response
 from time import time
 from pymongo import MongoClient
 
