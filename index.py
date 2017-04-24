@@ -284,7 +284,8 @@ def list():
         ss += ";" 
         ss += o["tiempoPalabra"] 
         ss += ";" 
-        ss += o["tamPalabra"] 
+        ss += o["tamPalabra"]
+        ss += ";"  
         ss += "\n"
       except Exception as e:
         pass
