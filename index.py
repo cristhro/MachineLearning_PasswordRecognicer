@@ -28,7 +28,7 @@ def home():
 
 @app.route('/entrenamiento')
 def entrenamiento():
-    usuario = 'jesus'
+    usuario = 'cristhian'
     numPalabra = 0
     palabra = doc_palabras.find_one({'numPalabra': numPalabra})
     numTotalPalabras = doc_palabras.count()
