@@ -208,6 +208,7 @@ def siguiente_palabra():
                 'numPalabra': numPalabra,
                 'numTotalPalabras': numTotalPalabras,
                 'tiempoPalabra':tiempoPalabra,
+                'tamPalabra': len(palabra)
             })
 
 
@@ -257,6 +258,42 @@ def insertatPalabras(doc):
     doc.insert({'numPalabra': 4, 'palabra': "CRISTHIANO RONALDO"})
     doc.insert({'numPalabra': 5, 'palabra': "ADIOS"})
     doc.insert({'numPalabra': 6, 'palabra': "GRACIAS"})
+
+
+@app.route('/list',methods = ["GET"])
+def list():
+    ops = doc_features.find()
+    ss = ""
+    for o in ops:
+      try:
+        ss += o["usuario"] 
+        ss += ";" 
+        ss += o["palabra"] 
+        ss += ";" 
+        ss += o["palabraLeida"] 
+        ss += ";" 
+        ss += o["tiempo"] 
+        ss += ";" 
+        ss += o["hayErrPalabra"] 
+        ss += ";" 
+        ss += o["tiempoErrPalabra"] 
+        ss += ";" 
+        ss += o["numPalabra"] 
+        ss += ";" 
+        ss += o["palabraLeida"] 
+        ss += ";" 
+        ss += o["tiempoPalabra"] 
+        ss += ";" 
+        ss += o["tamPalabra"] 
+        ss += "\n"
+      except Exception as e:
+        pass
+    output = make_response(ss)
+    output.headers["Content-Disposition"] = "attachment; filename=export.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
+
+
 
 # #################### RUN APP #############################
 
