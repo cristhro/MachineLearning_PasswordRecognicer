@@ -134,6 +134,9 @@ def getCaracter():
         'numTotalPalabras': numTotalPalabras,
         'tiempoPalabra':tiempoPalabra,
         'tamPalabra': len(palabra)
+        'caracter': '',
+        'fallosCaracter': False,
+        't0': 0
     }
 
     if not (isValidoUltimoCaracter(palabra, palabraLeida)):
@@ -215,6 +218,8 @@ def siguiente_palabra():
                 'caracter': '',
                 'fallosCaracter': False,
                 't0': 0
+
+
 
             })
 
