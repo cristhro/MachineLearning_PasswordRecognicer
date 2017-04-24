@@ -285,8 +285,7 @@ def list():
         ss += o["tiempoPalabra"] 
         ss += ";" 
         ss += o["tamPalabra"]
-        ss += ";"  
-        ss += "\n"
+        ss += ","
       except Exception as e:
         pass
     output = make_response(ss)
