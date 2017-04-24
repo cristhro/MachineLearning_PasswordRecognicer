@@ -139,7 +139,7 @@ def getCaracter():
     else:
         ultimoCaracter = palabraLeida[len(palabraLeida) - 1]
 
-    doc_features.insert(objeto)
+    #doc_features.insert(objeto)
 
     return jsonify({
         'usuario': usuario,
@@ -285,7 +285,7 @@ def list():
         ss += o["tiempoPalabra"] 
         ss += ";" 
         ss += o["tamPalabra"]
-        ss += ","
+        ss += "\n"
       except Exception as e:
         pass
     output = make_response(ss)
