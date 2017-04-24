@@ -128,7 +128,7 @@ def getCaracter():
         'palabra': palabra,
         'palabraLeida': palabraLeida,
         'tiempo': tiempo,
-        'hayErrPalabra': hayErrPalabra,
+        'hayErrPalabra': False,
         'tiempoErrPalabra': tiempoErrPalabra,
         'numPalabra': numPalabra,
         'numTotalPalabras': numTotalPalabras,
