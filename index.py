@@ -133,7 +133,7 @@ def getCaracter():
         'numPalabra': numPalabra,
         'numTotalPalabras': numTotalPalabras,
         'tiempoPalabra':tiempoPalabra,
-        'tamPalabra': len(palabra)
+        'tamPalabra': len(palabra),
         'caracter': '',
         'fallosCaracter': False,
         't0': 0
