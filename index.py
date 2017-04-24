@@ -274,7 +274,8 @@ def list():
         ss += ";" 
         ss += o["tiempo"] 
         ss += ";" 
-       ''' ss += o["hayErrPalabra"] 
+        ''' 
+        ss += o["hayErrPalabra"] 
         ss += ";" 
         ss += o["tiempoErrPalabra"] 
         ss += ";" 
@@ -284,7 +285,8 @@ def list():
         ss += ";" 
         ss += o["tiempoPalabra"] 
         ss += ";" 
-        ss += o["tamPalabra"]'''
+        ss += o["tamPalabra"]
+        '''
         ss += "\n"
       except Exception as e:
         pass
