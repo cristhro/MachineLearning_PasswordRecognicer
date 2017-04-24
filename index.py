@@ -32,7 +32,7 @@ def entrenamiento():
     numPalabra = 0
     palabra = doc_palabras.find_one({'numPalabra': numPalabra})
     numTotalPalabras = doc_palabras.count()
-    fin = 0
+    fin = False
 
     return render_template(
         'entrenamiento.html',
@@ -47,8 +47,8 @@ def entrenamiento():
         tiempo=0,
         numPalabra=numPalabra,
         numTotalPalabras=numTotalPalabras,
-        fallosCaracter=0,
-        hayErrPalabra=0,
+        fallosCaracter=False,
+        hayErrPalabra=False,
         tiempoErrPalabra=0,
         t0_error=0,
         fin=fin,
@@ -69,8 +69,8 @@ def autenticacion():
     tiempoErrPalabra = 0
     t0_palabra = time()
     tiempoPalabra = 0
-    hayErrPalabra = 0
-    fin = 0
+    hayErrPalabra = False
+    fin = False
 
     if request.method == 'POST':
         usuario = 'Jesus'
@@ -80,7 +80,7 @@ def autenticacion():
         t0_palabra = float(request.form['t0_palabra'])
 
         if (mismaPalabra(palabra, palabraLeida)):
-                fin = 1
+                fin = True
                 if  (t0_error != 0):
                     tiempoErrPalabra = str(time() - t0_error)
                 t0_error = 0
@@ -92,7 +92,7 @@ def autenticacion():
                 tiempoErrPalabra = tiempoErrPalabra + (time() - t0_error)
 
             t0_error = time()
-            hayErrPalabra = 1
+            hayErrPalabra = True
 
 
     return render_template(
@@ -104,7 +104,7 @@ def autenticacion():
         usuario=usuario,
         t0=t0,
         tiempo=0,
-        fallosCaracter=0,
+        fallosCaracter=False,
         hayErrPalabra=hayErrPalabra,
         tiempoErrPalabra=tiempoErrPalabra,
         t0_error=t0_error,
@@ -121,7 +121,7 @@ def getCaracter():
     palabraLeida = request.form['palabraLeida']
     tiempo = str(time() - float(request.form['t0']))
     ultimoCaracter = ""
-    fallosCaracter = 0
+    fallosCaracter = False
 
     objeto = {
         'usuario': usuario,
@@ -135,12 +135,12 @@ def getCaracter():
         'tiempoPalabra':tiempoPalabra,
         'tamPalabra': len(palabra),
         'caracter': '',
-        'fallosCaracter': 0,
+        'fallosCaracter': False,
         't0': 0
     }
 
     if not (isValidoUltimoCaracter(palabra, palabraLeida)):
-        fallosCaracter = 1
+        fallosCaracter = True
         objeto['fallosCaracter'] = fallosCaracter
     else:
         ultimoCaracter = palabraLeida[len(palabraLeida) - 1]
@@ -156,7 +156,7 @@ def getCaracter():
         'fallosCaracter': fallosCaracter,
         't0': time(),
         'tiempo': tiempo,
-        'hayErrPalabra': 0,
+        'hayErrPalabra': False,
         'tiempoErrPalabra': 0,
         't0_error': time(),
 
@@ -180,11 +180,11 @@ def siguiente_palabra():
     t0_palabra = float(request.form['t0_palabra'])
     tiempoPalabra = 0
 
-    hayErrPalabra = 0
-    fin = 0
+    hayErrPalabra = False
+    fin = False
 
     if(int(numPalabra) == (int(numTotalPalabras) - 1)):
-        fin = 1
+        fin = True
     else :
         docNuevaPalabra = doc_palabras.find_one({'numPalabra': int(numPalabra) + 1})
         nuevaPalabra  = docNuevaPalabra["palabra"]
@@ -201,7 +201,7 @@ def siguiente_palabra():
                 tiempoErrPalabra = tiempoErrPalabra + (time() - t0_error)
 
             t0_error = time()
-            hayErrPalabra = 1
+            hayErrPalabra = True
             nuevaPalabra = palabra
     # Guardamos el ojeto en la BD
     doc_features.insert({
@@ -216,7 +216,7 @@ def siguiente_palabra():
                 'tiempoPalabra':tiempoPalabra,
                 'tamPalabra': len(palabra),
                 'caracter': '',
-                'fallosCaracter': 0,
+                'fallosCaracter': False,
                 't0': 0
 
 
@@ -236,7 +236,7 @@ def siguiente_palabra():
         tiempo=0,
         numPalabra=numPalabra,
         numTotalPalabras=numTotalPalabras,
-        fallosCaracter=0,
+        fallosCaracter=False,
         hayErrPalabra=hayErrPalabra,
         tiempoErrPalabra=tiempoErrPalabra,
         t0_error=t0_error,
@@ -248,18 +248,18 @@ def siguiente_palabra():
 def isValidoUltimoCaracter(palabra, palabraLeida):
     if(len(palabraLeida) <= len(palabra) and len(palabraLeida) > 0):
         if(palabra[len(palabraLeida) - 1] == palabraLeida[len(palabraLeida) - 1]):
-            return 1
+            return True
         else:
-            return 0
+            return False
     else:
-        return 0
+        return False
 
 
 def mismaPalabra(palabra, palabraLeida):
     if(palabra == palabraLeida):
-        return 1
+        return True
     else:
-        return 0
+        return False
 
 
 def insertatPalabras(doc):
@@ -319,4 +319,4 @@ if __name__ == '__main__':
         PORT = int(environ.get('SERVER_PORT', '8000'))
     except ValueError:
         PORT = 5555
-    app.run(HOST, PORT, debug=1)
+    app.run(HOST, PORT, debug=True)
