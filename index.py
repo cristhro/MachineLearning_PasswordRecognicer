@@ -128,9 +128,12 @@ def getCaracter():
         'palabra': palabra,
         'palabraLeida': palabraLeida,
         'tiempo': tiempo,
-        'caracter': ultimoCaracter,
-        'fallosCaracter': fallosCaracter,
-        't0': time()
+        'hayErrPalabra': hayErrPalabra,
+        'tiempoErrPalabra': tiempoErrPalabra,
+        'numPalabra': numPalabra,
+        'numTotalPalabras': numTotalPalabras,
+        'tiempoPalabra':tiempoPalabra,
+        'tamPalabra': len(palabra)
     }
 
     if not (isValidoUltimoCaracter(palabra, palabraLeida)):
@@ -139,7 +142,7 @@ def getCaracter():
     else:
         ultimoCaracter = palabraLeida[len(palabraLeida) - 1]
 
-    #doc_features.insert(objeto)
+    doc_features.insert(objeto)
 
     return jsonify({
         'usuario': usuario,
@@ -208,7 +211,11 @@ def siguiente_palabra():
                 'numPalabra': numPalabra,
                 'numTotalPalabras': numTotalPalabras,
                 'tiempoPalabra':tiempoPalabra,
-                'tamPalabra': len(palabra)
+                'tamPalabra': len(palabra),
+                'caracter': '',
+                'fallosCaracter': False,
+                't0': 0
+
             })
 
 
@@ -274,7 +281,6 @@ def list():
         ss += ";" 
         ss += o["tiempo"] 
         ss += ";" 
-        ''' 
         ss += o["hayErrPalabra"] 
         ss += ";" 
         ss += o["tiempoErrPalabra"] 
@@ -286,7 +292,10 @@ def list():
         ss += o["tiempoPalabra"] 
         ss += ";" 
         ss += o["tamPalabra"]
-        '''
+        ss += ";" 
+        ss += o["caracter"]
+        ss += ";" 
+        ss += o["fallosCaracter"]
         ss += "\n"
       except Exception as e:
         pass
