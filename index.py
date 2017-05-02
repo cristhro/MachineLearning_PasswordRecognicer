@@ -47,7 +47,7 @@ def entrenamiento():
         tiempo=0,
         numPalabra=numPalabra,
         numTotalPalabras=numTotalPalabras,
-        fallosCaracter=False,
+        falloCaracter=False,
         hayErrPalabra=False,
         tiempoErrPalabra=0,
         t0_error=0,
@@ -104,7 +104,7 @@ def autenticacion():
         usuario=usuario,
         t0=t0,
         tiempo=0,
-        fallosCaracter=False,
+        falloCaracter=False,
         hayErrPalabra=hayErrPalabra,
         tiempoErrPalabra=tiempoErrPalabra,
         t0_error=t0_error,
@@ -121,7 +121,7 @@ def getCaracter():
     palabraLeida = request.form['palabraLeida']
     tiempo = str(time() - float(request.form['t0']))
     ultimoCaracter = ""
-    fallosCaracter = False
+    falloCaracter = False
     tiempoErrPalabra = 0
     numPalabra = 0
     tiempoPalabra = 0
@@ -140,15 +140,21 @@ def getCaracter():
         'tiempoPalabra':tiempoPalabra,
         'tamPalabra': len(palabra),
         'caracter': '',
-        'fallosCaracter': False,
-        't0': 0
+        'falloCaracter': False,
+        't0': 0,
+        'palabraCorrecta' : False
     }
 
     if not (isValidoUltimoCaracter(palabra, palabraLeida)):
-        fallosCaracter = True
-        objeto['fallosCaracter'] = fallosCaracter
+        falloCaracter = True
+        objeto['falloCaracter'] = True
+        ultimoCaracter = palabraLeida[len(palabraLeida) - 1]
+        objeto['caracter'] = ultimoCaracter
+
     else:
         ultimoCaracter = palabraLeida[len(palabraLeida) - 1]
+        objeto['caracter'] = ultimoCaracter
+        objeto['falloCaracter'] = False
 
     doc_features.insert(objeto)
 
@@ -158,7 +164,7 @@ def getCaracter():
         'palabraLeida': palabraLeida,
         'tiempo': tiempo,
         'caracter': ultimoCaracter,
-        'fallosCaracter': fallosCaracter,
+        'falloCaracter': falloCaracter,
         't0': time(),
         'tiempo': tiempo,
         'hayErrPalabra': False,
@@ -186,6 +192,7 @@ def siguiente_palabra():
     tiempoPalabra = 0
     hayErrPalabra = False
     fin = False
+    palabraCorrecta = False
 
     if(int(numPalabra) == (int(numTotalPalabras) - 1)):
         fin = True
@@ -193,8 +200,11 @@ def siguiente_palabra():
         docNuevaPalabra = doc_palabras.find_one({'numPalabra': int(numPalabra) + 1})
         nuevaPalabra  = docNuevaPalabra["palabra"]
         if (mismaPalabra(palabra, palabraLeida)):
+
             if  (t0_error != 0):
                 tiempoErrPalabra = str(time() - t0_error)
+            
+            palabraCorrecta = True
             t0_error = 0
             tiempoPalabra = str(time() - t0_palabra)
             t0_palabra = time()
@@ -220,8 +230,9 @@ def siguiente_palabra():
                 'tiempoPalabra':tiempoPalabra,
                 'tamPalabra': len(palabra),
                 'caracter': '',
-                'fallosCaracter': False,
-                't0': 0
+                'falloCaracter': False,
+                't0': 0,
+                'palabraCorrecta' : palabraCorrecta
             })
 
 
@@ -237,7 +248,7 @@ def siguiente_palabra():
         tiempo=0,
         numPalabra=numPalabra,
         numTotalPalabras=numTotalPalabras,
-        fallosCaracter=False,
+        falloCaracter=False,
         hayErrPalabra=hayErrPalabra,
         tiempoErrPalabra=tiempoErrPalabra,
         t0_error=t0_error,
@@ -277,8 +288,8 @@ def insertatPalabras(doc):
 def list():
     ops = doc_features.find()
     ss = ""
-
     for o in ops:
+
       try:
         ss += str(o["usuario"]) 
         ss += ";" 
@@ -286,21 +297,23 @@ def list():
         ss += ";" 
         ss += str(o["palabraLeida"]) 
         ss += ";" 
-        ss += str(o["tiempo"]) 
+        ss +=  str("%.3f" % round(float(o["tiempo"]),5) )
         ss += ";" 
         ss += str(o["hayErrPalabra"]) 
         ss += ";" 
-        ss += str(o["tiempoErrPalabra"]) 
+        ss += str("%.3f" % round(float(o["tiempoErrPalabra"]),5) ) 
         ss += ";" 
         ss += str(o["numPalabra"]) 
         ss += ";" 
-        ss += str(o["tiempoPalabra"]) 
+        ss += str("%.3f" % round(float(o["tiempoPalabra"]),5) ) 
         ss += ";" 
         ss += str(o["tamPalabra"])
         ss += ";" 
         ss += str(o["caracter"])
         ss += ";" 
-        ss += str(o["fallosCaracter"])
+        ss += str(o["falloCaracter"])
+        ss += ";" 
+        ss += str(o["palabraCorrecta"])
         ss += "\n"
       except Exception as e:
         pass

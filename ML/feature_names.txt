@@ -1,0 +1,1 @@
+usuario, palabra, palabraLeida, tiempoCaracter, hayErrPalabra, tiempoErrPalabra, numPalabra, caracter, falloCaracter, palabraCorrecta
