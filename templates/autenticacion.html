@@ -7,7 +7,17 @@
 	{% else %}
 	<div class="palabras">
 		<form action="/autenticacion" method="POST">
-			usuario: <input id="id_usuario" type = "text" name = "usuario" value = {{usuario}} disabled /> <br>
+			
+			<section>
+			<!-- cs-select cs-skin-underline -->
+		        <select id="id_select" class="" >
+		            <option value="" disabled selected> {{usuario}} </option>
+		            <option value="1">Cristhian </option>
+		            <option value="2"> Jesus</option>
+		        </select>
+		    </section>
+
+			usuario: <input class="usuario" type = "text" name = "usuario" value = {{usuario}} disabled /> <br>
 			tiempo char: <input id="id_tiempo" type = "text" name = "tiempo" value = {{tiempo}}  disabled/><br>
 			hay fallo palabra :<input id="id_hayErrPalabra" type = "text" name="hayErrPalabra" value = {{hayErrPalabra}}  disabled/><br>
 			tiempo en corregir error palabra :<input id="id_tiempoErrPalabra" type = "text" name="tiempoErrPalabra" value = {{tiempoErrPalabra}}  disabled/><br>
@@ -23,6 +33,7 @@
 			<button class="btn btn-2 btn-2b " type="submit">Enviar</button>
 
 			<!-- DATOS OCULTOS -->
+			<input class="usuario" type = "hidden" name = "usuario" value = {{usuario}} /> <br>
 			<input id="id_t0_error" type = "hidden" name="t0_error" value = {{t0_error}} /><br>
 			<input id="id_t0" type = "hidden" name = "t0" value = {{t0}} /><br>
 			<input id="id_palabra" type = "hidden" name="palabra" value = {{palabra}} /><br>
@@ -38,6 +49,11 @@
 	{% endblock %}	
 		<script>
 			$(document).ready(function(){
+				$("#id_select").change(function(){
+					usuario = $("#id_select :selected").text();	
+				    $(".usuario").val(usuario)
+				});
+
 				$("#id_palabra").keyup(function(){
 					$.ajax({
 					type: "POST",

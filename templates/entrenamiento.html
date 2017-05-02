@@ -8,8 +8,16 @@
 		<div class="palabras">
 			<form   autocomplete="off" action="/siguiente_palabra" method="POST">
 				
+					<section>
+					<!-- cs-select cs-skin-underline -->
+				        <select id="id_select" class="" >
+				            <option value="" disabled selected> {{usuario}} </option>
+				            <option value="1">Cristhian </option>
+				            <option value="2"> Jesus</option>
+				        </select>
+				    </section>
 					
-					usuario: <input id="id_usuario" type = "text" name = "usuario" value = {{usuario}} disabled /> <br>
+					usuario: <input class="usuario" type = "text" name = "usuario" value = {{usuario}} disabled /> <br>
 					tiempo char: <input id="id_tiempo" type = "text" name = "tiempo" value = {{tiempo}}  disabled/><br>
 					hay fallo palabra :<input id="id_hayErrPalabra" type = "text" name="hayErrPalabra" value = {{hayErrPalabra}}  disabled/><br>
 					tiempo en corregir error palabra :<input id="id_tiempoErrPalabra" type = "text" name="tiempoErrPalabra" value = {{tiempoErrPalabra}}  disabled/><br>
@@ -21,12 +29,13 @@
 					<span class="input input--minoru">
 						<input class="input__field input__field--yoko" type="text" id="id_palabraLeida"  name="palabraLeida" />
 						<label class="input__label input__label--yoko" for="input-16">
-							<span class="input__label-content input__label-content--yoko">{{numPalabra+1}}/{{numTotalPalabras}}</span>
+							<span class="input__label-content input__label-content--yoko">{{numPalabra + 1}}/{{numTotalPalabras}}</span>
 						</label>
 					</span>	
 					<button class="btn btn-2 btn-2b " type="submit">Siguiente</button>
 
 					<!-- DATOS OCULTOS -->
+					<input class="usuario" type = "hidden" name = "usuario" value = {{usuario}} /> <br>
 					<input id="id_t0_error" type = "hidden" name="t0_error" value = {{t0_error}} /><br>
 					<input id="id_t0" type = "hidden" name = "t0" value = {{t0}} /><br>
 					<input id="id_palabra" type = "hidden" name="palabra" value = {{palabra}} /><br>
@@ -38,13 +47,16 @@
 		</div><!-- /div palabras -->
 	{% endif %}
 	{% block scripts %}
-		<script src="/static/js/classie.js"></script>
-		<script src="https://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
-	{% endblock %}	
+	<script src="/static/js/classie.js"></script>
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	{% endblock %}	
 		<script>
 			$(document).ready(function(){
-
+				$("#id_select").change(function(){
+					usuario = $("#id_select :selected").text();	
+				    $(".usuario").val(usuario)
+				});
+				
 				$("#id_palabraLeida").keyup(function(){
 					// current question placeholder
 					console.log("palabra:" + $("#id_palabra").val() )
@@ -58,7 +70,9 @@
 					data: 	'palabra='+$("#id_palabra").val() + 
 						   	'&palabraLeida='+$(this).val() + 
 						  	'&t0='+$("#id_t0").val()+
-						  	'&esCristhian='+$('#id_cristhian').prop('checked'),
+						  	'&esCristhian='+$('#id_cristhian').prop('checked')+
+						  	'&usuario='+$("#id_select :selected").text()
+						  	,
 					success: function(data){
 						console.log("Datos del servidor")
 						console.log(data)
@@ -77,7 +91,7 @@
 
 				$( "#id_cristhian" ).is(':checked')
 			});
-			
+		
 		</script>
 
 {% endblock %}

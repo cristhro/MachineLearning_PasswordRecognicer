@@ -28,7 +28,7 @@ def home():
 
 @app.route('/entrenamiento')
 def entrenamiento():
-    usuario = 'cristhian'
+    usuario = 'Jesus'
     numPalabra = 0
     palabra = doc_palabras.find_one({'numPalabra': numPalabra})
     numTotalPalabras = doc_palabras.count()
@@ -116,12 +116,17 @@ def autenticacion():
 
 @app.route('/getCaracter', methods=['POST'])
 def getCaracter():
-    usuario = 'Jesus'
+    usuario = request.form['usuario']
     palabra = request.form['palabra']
     palabraLeida = request.form['palabraLeida']
     tiempo = str(time() - float(request.form['t0']))
     ultimoCaracter = ""
     fallosCaracter = False
+    tiempoErrPalabra = 0
+    numPalabra = 0
+    tiempoPalabra = 0
+    numTotalPalabras = 0
+
 
     objeto = {
         'usuario': usuario,
@@ -168,7 +173,7 @@ def siguiente_palabra():
     objeto = {}
     numPalabra = int(request.form['numPalabra'])
     numTotalPalabras = request.form['numTotalPalabras']
-    usuario = 'Jesus'
+    usuario = request.form['usuario']
     palabras = doc_palabras.find()
     docPalabra = doc_palabras.find_one({'numPalabra': int(numPalabra)})
     palabra = docPalabra['palabra']
@@ -179,7 +184,6 @@ def siguiente_palabra():
     tiempoErrPalabra = 0
     t0_palabra = float(request.form['t0_palabra'])
     tiempoPalabra = 0
-
     hayErrPalabra = False
     fin = False
 
@@ -218,9 +222,6 @@ def siguiente_palabra():
                 'caracter': '',
                 'fallosCaracter': False,
                 't0': 0
-
-
-
             })
 
 
@@ -276,31 +277,30 @@ def insertatPalabras(doc):
 def list():
     ops = doc_features.find()
     ss = ""
+
     for o in ops:
       try:
-        ss += o["usuario"] 
+        ss += str(o["usuario"]) 
         ss += ";" 
-        ss += o["palabra"] 
+        ss += str(o["palabra"]) 
         ss += ";" 
-        ss += o["palabraLeida"] 
+        ss += str(o["palabraLeida"]) 
         ss += ";" 
-        ss += o["tiempo"] 
+        ss += str(o["tiempo"]) 
         ss += ";" 
-        ss += o["hayErrPalabra"] 
+        ss += str(o["hayErrPalabra"]) 
         ss += ";" 
-        ss += o["tiempoErrPalabra"] 
+        ss += str(o["tiempoErrPalabra"]) 
         ss += ";" 
-        ss += o["numPalabra"] 
+        ss += str(o["numPalabra"]) 
         ss += ";" 
-        ss += o["palabraLeida"] 
+        ss += str(o["tiempoPalabra"]) 
         ss += ";" 
-        ss += o["tiempoPalabra"] 
+        ss += str(o["tamPalabra"])
         ss += ";" 
-        ss += o["tamPalabra"]
+        ss += str(o["caracter"])
         ss += ";" 
-        ss += o["caracter"]
-        ss += ";" 
-        ss += o["fallosCaracter"]
+        ss += str(o["fallosCaracter"])
         ss += "\n"
       except Exception as e:
         pass
@@ -309,12 +309,10 @@ def list():
     output.headers["Content-type"] = "text/csv"
     return output
 
-
-
 # #################### RUN APP #############################
-
 if __name__ == '__main__':
-    HOST = environ.get('SERVER_HOST', 'ec2-52-205-165-220.compute-1.amazonaws.com')
+    #HOST = environ.get('SERVER_HOST', 'ec2-52-205-165-220.compute-1.amazonaws.com')
+    HOST = environ.get('SERVER_HOST', 'localhost')
     try:
         PORT = int(environ.get('SERVER_PORT', '8000'))
     except ValueError:
