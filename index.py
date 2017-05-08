@@ -11,20 +11,20 @@ db = client.get_default_database()
 
 doc_palabras = db.palabras
 doc_usuarios = db.doc_usuarios
-doc_features = db.features
+doc_features = db.features_1
 
 app = Flask(__name__)
 
 
 @app.route('/')
 @app.route('/home')
+
 def home():
     return render_template(
         'index.html',
         title='App',
         message='autentication',
     )
-
 
 @app.route('/entrenamiento')
 def entrenamiento():
@@ -54,8 +54,6 @@ def entrenamiento():
         fin=fin,
 
     )
-
-
 
 @app.route('/autenticacion',methods = ["GET", "POST"])
 def autenticacion():
@@ -111,8 +109,6 @@ def autenticacion():
         t0_palabra=t0_palabra,
         tiempoPalabra=tiempoPalabra,
         fin=fin)
-
-
 
 @app.route('/getCaracter', methods=['POST'])
 def getCaracter():
@@ -172,7 +168,6 @@ def getCaracter():
         't0_error': time(),
 
     })
-
 
 @app.route('/siguiente_palabra', methods=['POST'])
 def siguiente_palabra():
@@ -256,7 +251,6 @@ def siguiente_palabra():
         tiempoPalabra=tiempoPalabra,
         fin=fin)
 
-
 def isValidoUltimoCaracter(palabra, palabraLeida):
     if(len(palabraLeida) <= len(palabra) and len(palabraLeida) > 0):
         if(palabra[len(palabraLeida) - 1] == palabraLeida[len(palabraLeida) - 1]):
@@ -266,13 +260,11 @@ def isValidoUltimoCaracter(palabra, palabraLeida):
     else:
         return False
 
-
 def mismaPalabra(palabra, palabraLeida):
     if(palabra == palabraLeida):
         return True
     else:
         return False
-
 
 def insertatPalabras(doc):
     doc.insert({'numPalabra': 0, 'palabra': "ROJO"})
@@ -282,7 +274,6 @@ def insertatPalabras(doc):
     doc.insert({'numPalabra': 4, 'palabra': "CRISTHIANO RONALDO"})
     doc.insert({'numPalabra': 5, 'palabra': "ADIOS"})
     doc.insert({'numPalabra': 6, 'palabra': "GRACIAS"})
-
 
 @app.route('/list',methods = ["GET"])
 def list():
@@ -324,8 +315,8 @@ def list():
 
 # #################### RUN APP #############################
 if __name__ == '__main__':
-    HOST = environ.get('SERVER_HOST', 'ec2-52-205-165-220.compute-1.amazonaws.com')
     #HOST = environ.get('SERVER_HOST', 'localhost')
+    HOST = environ.get('SERVER_HOST', 'ec2-52-205-165-220.compute-1.amazonaws.com')
     try:
         PORT = int(environ.get('SERVER_PORT', '8000'))
     except ValueError:

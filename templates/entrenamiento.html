@@ -56,31 +56,32 @@
 					usuario = $("#id_select :selected").text();	
 				    $(".usuario").val(usuario)
 				});
-				
-				$("#id_palabraLeida").keyup(function(){
-					// current question placeholder
-					console.log("palabra:" + $("#id_palabra").val() )
-					console.log("palabraLeida:" + $(this).val())
-					console.log("t0:" + $("#id_t0").val())
-					console.log("esCristhian:" + $('#id_cristhian').prop('checked'))
 
-					$.ajax({
-					type: "POST",
-					url: "/getCaracter",
-					data: 	'palabra='+$("#id_palabra").val() + 
-						   	'&palabraLeida='+$(this).val() + 
-						  	'&t0='+$("#id_t0").val()+
-						  	'&esCristhian='+$('#id_cristhian').prop('checked')+
-						  	'&usuario='+$("#id_select :selected").text()
-						  	,
-					success: function(data){
-						console.log("Datos del servidor")
-						console.log(data)
+				$( "#id_palabraLeida" ).keydown(function( event ) {
+			
+					if(event.key !== "Backspace" && event.key !== "Enter" &&  event.key !== "CapsLock")  {
+						
+						console.log("palabra:" + $("#id_palabra").val() )
+						console.log("palabraLeida:" + $(this).val()+event.key)
 
-						$("#id_t0").val(data.t0)
-						$("#id_tiempo").val(data.tiempo)
+						$.ajax({
+							type: "POST",
+							url: "/getCaracter",
+							data: 	'palabra='+$("#id_palabra").val() + 
+								   	'&palabraLeida='+$(this).val()+event.key + 
+								  	'&t0='+$("#id_t0").val()+
+								  	'&esCristhian='+$('#id_cristhian').prop('checked')+
+								  	'&usuario='+$("#id_select :selected").text()
+								  	,
+							success: function(data){
+								console.log("Datos del servidor")
+								console.log(data)
+
+								$("#id_t0").val(data.t0)
+								$("#id_tiempo").val(data.tiempo)
+							}
+						});						
 					}
-					});
 				});
 				
 				$( "#id_palabraLeida" ).click(function() {
