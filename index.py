@@ -315,8 +315,8 @@ def list():
 
 # #################### RUN APP #############################
 if __name__ == '__main__':
-    HOST = environ.get('SERVER_HOST', 'localhost')
-    #HOST = environ.get('SERVER_HOST', 'ec2-52-205-165-220.compute-1.amazonaws.com')
+    #HOST = environ.get('SERVER_HOST', 'localhost')
+    HOST = environ.get('SERVER_HOST', 'ec2-52-205-165-220.compute-1.amazonaws.com')
     try:
         PORT = int(environ.get('SERVER_PORT', '8000'))
     except ValueError:
