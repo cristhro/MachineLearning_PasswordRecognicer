@@ -3,16 +3,12 @@
 {% block content %}
 	
 	{% if fin %}
-		<h2  class="main-title">{{ usuario }} <span class="thin">, palabra correcta!</span></h2>
+		<h2  class="main-title"> Eres  <span class="thin">{{ usuario }}!</span></h2>
 	{% else %}
 	<div class="palabras">
 		<form action="/autenticacion" method="POST">
 			
-			usuario: <input class="usuario" type = "text" name = "usuario" value = {{usuario}} disabled /> <br>
-			tiempo char: <input id="id_tiempo" type = "text" name = "tiempo" value = {{tiempo}}  disabled/><br>
-			hay fallo palabra :<input id="id_hayErrPalabra" type = "text" name="hayErrPalabra" value = {{hayErrPalabra}}  disabled/><br>
-			tiempo en corregir error palabra :<input id="id_tiempoErrPalabra" type = "text" name="tiempoErrPalabra" value = {{tiempoErrPalabra}}  disabled/><br>
-			tiempo  palabra :<input id="id_tiempoPalabra" type = "text" name="tiempoPalabra" value = {{tiempoPalabra}}  disabled/><br>
+			
 			
 			<!-- BEGIN Palabras  --> 
 			<h1>{{ palabra }} <span class="thin"></span></h1>	
@@ -24,7 +20,6 @@
 			<button class="btn btn-2 btn-2b " type="submit">Enviar</button>
 
 			<!-- DATOS OCULTOS -->
-			<input class="usuario" type = "hidden" name = "usuario" value = {{usuario}} /> <br>
 			<input id="id_t0_error" type = "hidden" name="t0_error" value = {{t0_error}} /><br>
 			<input id="id_t0" type = "hidden" name = "t0" value = {{t0}} /><br>
 			<input id="id_palabra" type = "hidden" name="palabra" value = {{palabra}} /><br>
@@ -40,10 +35,6 @@
 	{% endblock %}	
 		<script>
 			$(document).ready(function(){
-				$("#id_select").change(function(){
-					usuario = $("#id_select :selected").text();	
-				    $(".usuario").val(usuario)
-				});
 
 				$("#id_palabra").keyup(function(){
 					$.ajax({
@@ -52,9 +43,32 @@
 					data:'palabraLeida='+$(this).val()+ '&t0='+$("#id_t0").val(),
 					success: function(data){
 						console.log("Correcto "+ data.palabraLeida +  " T:" + data.tiempo)
-						$("#id_t0").val(data.t0)
+							$("#id_t0").val(data.t0)
+							$("#id_tiempo").val(data.tiempo)
 					}
 					});
+				});
+				$( "#id_palabraLeida" ).keydown(function( event ) {
+			
+					if(event.key !== "Backspace" && event.key !== "Enter" &&  event.key !== "CapsLock" && event.key !== "Alt")  {
+						
+						console.log("palabra:" + $("#id_palabra").val() )
+						console.log("palabraLeida:" + $(this).val()+event.key)
+
+						$.ajax({
+							type: "POST",
+							url: "/getCaracterLogin",
+							data: 	'palabra='+$("#id_palabra").val() + 
+								   	'&palabraLeida='+$(this).val()+event.key + 
+								  	'&t0='+$("#id_t0").val()
+								  	,
+							success: function(data){
+								console.log("Datos del servidor")
+								$("#id_t0").val(data.t0)
+								$("#id_tiempo").val(data.tiempo)
+							}
+						});						
+					}
 				});
 				$( "#id_pregunta" ).click(function() {
 					var seconds = new Date().getTime() / 1000;

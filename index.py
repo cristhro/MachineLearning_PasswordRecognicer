@@ -3,6 +3,9 @@ from os import environ
 from flask import Flask, jsonify, request, render_template, make_response
 from time import time
 from pymongo import MongoClient
+from sklearn.ensemble import AdaBoostClassifier
+from collections import Counter
+import cPickle 
 
 
 MONGODB_URI = "mongodb://admin:admin@ds159050.mlab.com:59050/flaskdb"
@@ -11,7 +14,8 @@ db = client.get_default_database()
 
 doc_palabras = db.palabras
 doc_usuarios = db.doc_usuarios
-doc_features = db.features_1
+doc_features = db.features_train_1
+doc_features_test = db.features_test
 
 app = Flask(__name__)
 
@@ -59,8 +63,7 @@ def entrenamiento():
 def autenticacion():
 
     palabraLeida = ""
-    palabra = "MESA"
-    usuario = 'Jesus'
+    palabra = "ZANAHORIA"
     t0 = time()
     tiempo = 0
     t0_error = 0
@@ -69,9 +72,9 @@ def autenticacion():
     tiempoPalabra = 0
     hayErrPalabra = False
     fin = False
+    usuario = "Jesus"
 
     if request.method == 'POST':
-        usuario = 'Jesus'
         palabraLeida = request.form['palabraLeida']
         tiempo = str(time() - float(request.form['t0']))
         t0_error = float(request.form['t0_error'])
@@ -84,6 +87,18 @@ def autenticacion():
                 t0_error = 0
                 tiempoPalabra = str(time() - t0_palabra)
                 t0_palabra = time()
+
+                # Si es correcta la palabra #####################################################################
+                modelo = getModelo()
+                features_test = get_feature_test()
+                y_pred = modelo.predict(features_test)
+
+                print(get_nombre_usuario(y_pred))
+                usuario = get_nombre_usuario(get_usuario_ganador(y_pred))
+                print (usuario)
+
+                doc_features_test.drop()
+                #################################################################################################
         else:
             if  (t0_error != 0):
                 tiempoErrPalabra = time() - t0_error
@@ -168,7 +183,57 @@ def getCaracter():
         't0_error': time(),
 
     })
+@app.route('/getCaracterLogin', methods=['POST'])
+def getCaracterLogin():
+    palabra = request.form['palabra']
+    palabraLeida = request.form['palabraLeida']
+    tiempo = str(time() - float(request.form['t0']))
+    ultimoCaracter = ""
+    falloCaracter = False
+    tiempoErrPalabra = 0
+    tiempoPalabra = 0
 
+
+    objeto = {
+        'palabra': palabra,
+        'palabraLeida': palabraLeida,
+        'tiempo': tiempo,
+        'hayErrPalabra': False,
+        'tiempoErrPalabra': tiempoErrPalabra,
+        'tiempoPalabra':tiempoPalabra,
+        'tamPalabra': len(palabra),
+        'caracter': '',
+        'falloCaracter': False,
+        't0': 0,
+        'palabraCorrecta' : False
+    }
+
+    if not (isValidoUltimoCaracter(palabra, palabraLeida)):
+        falloCaracter = True
+        objeto['falloCaracter'] = True
+        ultimoCaracter = palabraLeida[len(palabraLeida) - 1]
+        objeto['caracter'] = ultimoCaracter
+
+    else:
+        ultimoCaracter = palabraLeida[len(palabraLeida) - 1]
+        objeto['caracter'] = ultimoCaracter
+        objeto['falloCaracter'] = False
+
+    doc_features_test.insert(objeto)
+
+    return jsonify({
+        'palabra': palabra,
+        'palabraLeida': palabraLeida,
+        'tiempo': tiempo,
+        'caracter': ultimoCaracter,
+        'falloCaracter': falloCaracter,
+        't0': time(),
+        'tiempo': tiempo,
+        'hayErrPalabra': False,
+        'tiempoErrPalabra': 0,
+        't0_error': time(),
+
+    })
 @app.route('/siguiente_palabra', methods=['POST'])
 def siguiente_palabra():
     objeto = {}
@@ -275,6 +340,43 @@ def insertatPalabras(doc):
     doc.insert({'numPalabra': 5, 'palabra': "ADIOS"})
     doc.insert({'numPalabra': 6, 'palabra': "GRACIAS"})
 
+####################### mdoelo #########################33
+def get_feature_test():
+    with open('le_caracter.pkl', 'rb') as fid:
+        le_caracter = cPickle.load(fid)
+
+    features_test_obs = doc_features_test.find()
+
+    features_test = []
+    for objeto in features_test_obs:
+        
+        try:
+            caracter_t = le_caracter.transform([[objeto["caracter"]]])
+            feature_caracter = round(float(objeto["tiempo"]),5) 
+            feature_fallo = round(float(objeto["falloCaracter"]),5) 
+
+            feature = [caracter_t[0], feature_caracter, feature_fallo]
+            features_test.append (feature)
+        except Exception as e:
+            pass
+
+    return features_test
+
+def get_nombre_usuario(num_usuario):
+    with open('le_usuario.pkl', 'rb') as fid:
+        le_usuario = cPickle.load(fid)
+
+    u =  le_usuario.inverse_transform([num_usuario])
+    return u[0]
+
+def get_usuario_ganador (mylist):
+    return max(k for k,v in Counter(mylist).items() if v>1)
+
+def getModelo():
+    with open('classifier.pkl', 'rb') as fid:
+        modelo = cPickle.load(fid)
+    return modelo
+
 @app.route('/list',methods = ["GET"])
 def list():
     ops = doc_features.find()
@@ -315,8 +417,8 @@ def list():
 
 # #################### RUN APP #############################
 if __name__ == '__main__':
-    #HOST = environ.get('SERVER_HOST', 'localhost')
-    HOST = environ.get('SERVER_HOST', 'ec2-52-205-165-220.compute-1.amazonaws.com')
+    HOST = environ.get('SERVER_HOST', 'localhost')
+    #HOST = environ.get('SERVER_HOST', 'ec2-52-205-165-220.compute-1.amazonaws.com')
     try:
         PORT = int(environ.get('SERVER_PORT', '8000'))
     except ValueError:
