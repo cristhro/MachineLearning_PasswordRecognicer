@@ -3,7 +3,14 @@ from os import environ
 from flask import Flask, jsonify, request, render_template, make_response
 from time import time
 from pymongo import MongoClient
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn import svm
+import pandas as pd
+import numpy as np
 from collections import Counter
+
 import cPickle 
 
 
@@ -88,15 +95,7 @@ def autenticacion():
                 t0_palabra = time()
 
                 # Si es correcta la palabra #####################################################################
-                modelo = getModelo()
-                features_test = get_feature_test()
-                y_pred = modelo.predict(features_test)
-
-                print(get_nombre_usuario(y_pred))
-                usuario = get_nombre_usuario(get_usuario_ganador(y_pred))
-                print (usuario)
-
-                doc_features_test.drop()
+                realizar_prediccion()
                 #################################################################################################
         else:
             if  (t0_error != 0):
@@ -182,6 +181,7 @@ def getCaracter():
         't0_error': time(),
 
     })
+
 @app.route('/getCaracterLogin', methods=['POST'])
 def getCaracterLogin():
     palabra = request.form['palabra']
@@ -233,6 +233,7 @@ def getCaracterLogin():
         't0_error': time(),
 
     })
+
 @app.route('/siguiente_palabra', methods=['POST'])
 def siguiente_palabra():
     objeto = {}
@@ -294,7 +295,8 @@ def siguiente_palabra():
                 'palabraCorrecta' : palabraCorrecta
             })
 
-
+    # Realizamos el entrenamiento
+    realizar_entrenamiento()
 
     return render_template(
         'entrenamiento.html',
@@ -339,7 +341,7 @@ def insertatPalabras(doc):
     doc.insert({'numPalabra': 5, 'palabra': "ADIOS"})
     doc.insert({'numPalabra': 6, 'palabra': "GRACIAS"})
 
-####################### mdoelo #########################33
+####################### MODELO #########################33
 def get_feature_test():
     with open('le_caracter.pkl', 'rb') as fid:
         le_caracter = cPickle.load(fid)
@@ -361,6 +363,35 @@ def get_feature_test():
 
     return features_test
 
+def preprocess():
+    print('<-- preprocess')
+    with open('le_caracter.pkl', 'rb') as fid:
+        le_caracter = cPickle.load(fid)
+    with open('le_usuario.pkl', 'rb') as fid2:
+        le_usuario = cPickle.load(fid2)
+    
+    features_train_obs = doc_features.find()
+    features_train = []
+    labels_train = []
+
+    for objeto in features_train_obs:
+        try:
+            # Features
+            usuario = le_usuario.transform([objeto["usuario"].strip()])
+            caracter_t = le_caracter.transform([[objeto["caracter"]]])
+            feature_caracter = round(float(objeto["tiempo"]),5) 
+            feature_fallo = round(float(objeto["falloCaracter"]),5) 
+
+            # Guardamos
+            feature = [caracter_t[0], feature_caracter, feature_fallo]
+            features_train.append (feature)
+            labels_train.append(usuario[0])
+            
+        except Exception as e:
+            pass
+    print ('<-- OK') 
+    return features_train, labels_train
+
 def get_nombre_usuario(num_usuario):
     with open('le_usuario.pkl', 'rb') as fid:
         le_usuario = cPickle.load(fid)
@@ -371,10 +402,43 @@ def get_nombre_usuario(num_usuario):
 def get_usuario_ganador (mylist):
     return max(k for k,v in Counter(mylist).items() if v>1)
 
-def getModelo():
+def realizar_prediccion():
+    modelo = importarModelo()
+    features_test = get_feature_test()
+    y_pred = modelo.predict(features_test)
+
+    print(get_nombre_usuario(y_pred))
+    usuario = get_nombre_usuario(get_usuario_ganador(y_pred))
+    print (usuario)
+
+    doc_features_test.drop()
+def realizar_entrenamiento():
+    print ('<-- realizando entrenamiento')
+    # svm = svm.SVC(kernel='linear', C=1)
+    ada = AdaBoostClassifier(n_estimators=100)
+    # random_forest = RandomForestClassifier(n_estimators=101)
+    
+    # Obtenemos las features y los labels
+    features_train, labels_train = preprocess()
+
+    print (np.shape(labels_train))
+    print (np.shape(features_train))
+
+    # Entrenamos
+    ada.fit(features_train, labels_train)
+
+    exportarModelo(ada)
+
+def importarModelo():
     with open('classifier.pkl', 'rb') as fid:
         modelo = cPickle.load(fid)
     return modelo
+
+def exportarModelo(modelo):  
+    print('<--- exportar modelo')  
+    # save the classifier
+    with open('classifier.pkl', 'wb') as fid:
+        cPickle.dump(modelo, fid) 
 
 @app.route('/list',methods = ["GET"])
 def list():
@@ -416,8 +480,8 @@ def list():
 
 # #################### RUN APP #############################
 if __name__ == '__main__':
-    #HOST = environ.get('SERVER_HOST', 'localhost')
-    HOST = environ.get('SERVER_HOST', 'ec2-52-205-165-220.compute-1.amazonaws.com')
+    HOST = environ.get('SERVER_HOST', 'localhost')
+    #HOST = environ.get('SERVER_HOST', 'ec2-52-205-165-220.compute-1.amazonaws.com')
     try:
         PORT = int(environ.get('SERVER_PORT', '8000'))
     except ValueError:
